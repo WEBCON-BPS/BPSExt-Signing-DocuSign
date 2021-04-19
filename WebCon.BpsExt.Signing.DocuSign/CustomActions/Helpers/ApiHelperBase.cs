@@ -12,15 +12,15 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
     {
         private const int TOKEN_REPLACEMENT_IN_SECONDS = 10 * 60;
 
-        private static string AccessToken { get; set; }
-        private static DateTime expiresAt;
-        private static Account Account { get; set; }
+        private string AccessToken { get; set; }
+        private DateTime expiresAt;
+        private Account Account { get; set; }
         private readonly ApiConfigurationBase Config;
         private readonly StringBuilder _logger;
 
-        protected static ApiClient ApiClient { get; private set; }
+        protected ApiClient ApiClient { get; private set; }
 
-        protected static string AccountID
+        protected string AccountID
         {
             get { return Account.AccountId; }
         }
