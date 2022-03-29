@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCon.BpsExt.Signing.DocuSign", "WebCon.BpsExt.Signing.DocuSign\WebCon.BpsExt.Signing.DocuSign.csproj", "{5EAEC625-63C8-4164-B29A-9454C2757241}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebCon.BpsExt.Signing.DocuSign", "WebCon.BpsExt.Signing.DocuSign\WebCon.BpsExt.Signing.DocuSign.csproj", "{F0080011-3EF6-4FAE-AC23-B1303498F5C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5EAEC625-63C8-4164-B29A-9454C2757241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EAEC625-63C8-4164-B29A-9454C2757241}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EAEC625-63C8-4164-B29A-9454C2757241}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EAEC625-63C8-4164-B29A-9454C2757241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0080011-3EF6-4FAE-AC23-B1303498F5C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0080011-3EF6-4FAE-AC23-B1303498F5C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0080011-3EF6-4FAE-AC23-B1303498F5C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0080011-3EF6-4FAE-AC23-B1303498F5C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

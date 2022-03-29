@@ -56,6 +56,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
                 Account = GetAccountInfo(authToken);
 
             ApiClient = new ApiClient(Account.BaseUri + "/restapi");
+            ApiClient.Configuration.DefaultHeader.Add("Authorization", $"Bearer {AccessToken}");
             expiresAt = DateTime.Now.AddSeconds(authToken.expires_in.Value);
         }
 
