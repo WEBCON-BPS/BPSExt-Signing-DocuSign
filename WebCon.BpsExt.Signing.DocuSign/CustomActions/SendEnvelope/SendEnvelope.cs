@@ -48,7 +48,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
             }
         }
 
