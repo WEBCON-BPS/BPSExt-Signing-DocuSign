@@ -18,6 +18,8 @@ jobs:
       run: dotnet restore WebCon.BpsExt.Signing.DocuSign.sln
     - name: Build
       run: dotnet build WebCon.BpsExt.Signing.DocuSign.sln  --no-restore --configuration Release 
+    - name: Copy references
+      run: xcopy "ReferenceDll\System.ComponentModel.Annotations.dll" "WebCon.BpsExt.Signing.DocuSign\bin\Release\netstandard2.0\" /Y
     - uses: actions/upload-artifact@v3
       with:
         name: WebCon.BpsExt.Signing.DocuSign
@@ -31,5 +33,5 @@ jobs:
           WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/Microsoft.IdentityModel.Protocols.dll
           WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/Microsoft.IdentityModel.Tokens.dll
           WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll
-          ReferenceDll/System.ComponentModel.Annotations.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/System.ComponentModel.Annotations.dll
           
