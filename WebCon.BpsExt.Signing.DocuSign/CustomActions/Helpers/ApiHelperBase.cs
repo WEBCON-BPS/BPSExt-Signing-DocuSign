@@ -18,14 +18,14 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
         private readonly ApiConfigurationBase Config;
         private readonly StringBuilder _logger;
 
-        protected ApiClient ApiClient { get; private set; }
+        protected DocuSignClient ApiClient { get; private set; }
 
         protected string AccountID
         {
             get { return Account.AccountId; }
         }
 
-        public ApiHelperBase(ApiClient client, ApiConfigurationBase config, StringBuilder logger)
+        public ApiHelperBase(DocuSignClient client, ApiConfigurationBase config, StringBuilder logger)
         {
             ApiClient = client;
             Config = config;
@@ -55,7 +55,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             if (Account == null)
                 Account = GetAccountInfo(authToken);
 
-            ApiClient = new ApiClient(Account.BaseUri + "/restapi");
+            ApiClient = new DocuSignClient(Account.BaseUri + "/restapi");
             ApiClient.Configuration.DefaultHeader.Add("Authorization", $"Bearer {AccessToken}");
             expiresAt = DateTime.Now.AddSeconds(authToken.expires_in.Value);
         }

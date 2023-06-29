@@ -9,21 +9,23 @@ using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
 using WebCon.WorkFlow.SDK.Tools.Other;
+using System.Threading.Tasks;
+using WebCon.WorkFlow.SDK.Documents;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
 {
     public class DownloadDocuments : CustomAction<DownloadDocumentsConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override void Run(RunCustomActionParams args)
+        public override async Task RunAsync(RunCustomActionParams args)
         {
             try
             {
-                var apiClient = new ApiClient();
+                var apiClient = new DocuSignClient();
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.DocumentSettings.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Downloading documents for envelope : {envelopeId}");
                 var documents = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).DownloadDocuments(envelopeId);
-                AddDocumentsToAttachments(documents, args.Context);
+                await AddDocumentsToAttachmentsAsync(documents, args.Context);
             }
             catch (Exception ex)
             {
@@ -34,12 +36,13 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger.AppendInfo(_logger.ToString());
             }
         }
 
-        private void AddDocumentsToAttachments(List<ApiHelper.DocumentFromEnvelope> documents, ActionContextInfo context)
+        private async Task AddDocumentsToAttachmentsAsync(List<ApiHelper.DocumentFromEnvelope> documents, ActionContextInfo context)
         {
+            var manager = new DocumentAttachmentsManager(context);
             var documentsToOverride = context.CurrentDocument.Fields.GetByID(Configuration.DocumentSettings.TechnicalFieldID).GetValue()?.ToString()?.Split(';');
             foreach (var doc in documents)
             {
@@ -47,32 +50,35 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
                     .Where(x => TextHelper.GetPairName(x) == doc.DocumentID.ToString())
                     .Select(x => TextHelper.GetPairId(x)).FirstOrDefault();
 
-                var group = CreateGroup();
                 if (string.IsNullOrEmpty(Configuration.Output.Suffix) && !string.IsNullOrEmpty(currentDocAttId))
                 {
-                    var att = context.CurrentDocument.Attachments.GetByID(Int32.Parse(currentDocAttId));
+                    var att = await context.CurrentDocument.Attachments.GetByIDAsync(Int32.Parse(currentDocAttId));
                     att.Content = doc.DocumentContent;
-                    if (group != null)
-                        att.FileGroup = group;
+                    if (!string.IsNullOrEmpty(Configuration.Output.GroupName))
+                        await SetFileGroup(att, Configuration.Output.GroupName);
                 }              
                 else
                 {
-                    var att = new NewAttachmentData(CreateNameWithSuffix(doc.Name), doc.DocumentContent);
-                    if (group != null)
-                        att.FileGroup = group;
-                    context.CurrentDocument.Attachments.AddNew(att);
+                    
+                    var att = manager.GetNewAttachment(CreateNameWithSuffix(doc.Name), doc.DocumentContent);
+                    if (!string.IsNullOrEmpty(Configuration.Output.GroupName))
+                        await SetFileGroup(att, Configuration.Output.GroupName);
+
+                    await context.CurrentDocument.Attachments.AddNewAsync(att);
                 }
             }
         }
 
-        private AttachmentsGroup CreateGroup()
+        private async Task SetFileGroup(NewAttachmentData newAtt, string category)
         {
-            if (string.IsNullOrEmpty(Configuration.Output.GroupName))
-                return null;
+            if (category.Contains("#"))
+            {
+                newAtt.FileGroup = new AttachmentsGroup(TextHelper.GetPairId(category), TextHelper.GetPairName(category));
+                return;
+            }
 
-            return new AttachmentsGroup(
-                    TextHelper.GetPairId(Configuration.Output.GroupName),
-                    TextHelper.GetPairName(Configuration.Output.GroupName));
+            var fileGroup = await newAtt.ResolveAsync(category);
+            newAtt.FileGroup = fileGroup ?? new AttachmentsGroup(category);
         }
 
         private string CreateNameWithSuffix(string name)

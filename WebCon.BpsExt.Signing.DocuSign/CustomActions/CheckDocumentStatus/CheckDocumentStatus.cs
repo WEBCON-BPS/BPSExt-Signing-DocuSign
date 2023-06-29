@@ -5,13 +5,14 @@ using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
 using DocuSign.eSign.Client;
 using DocuSign.eSign.Model;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
 {
     public class CheckDocumentStatus : CustomAction<CheckDocumentStatusConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override void Run(RunCustomActionParams args)
+        public override Task RunAsync(RunCustomActionParams args)
         {
             try
             {
@@ -28,14 +29,15 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger.AppendInfo(_logger.ToString());           
             }
+            return Task.CompletedTask;
         }
 
         private Envelope GetEnvelope(ActionContextInfo context)
         {
             var envId = context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeFieldId).GetValue().ToString();
-            var apiClient = new ApiClient();
+            var apiClient = new DocuSignClient();
             _logger.AppendLine("Downloading envelope");
             return new ApiHelper(apiClient, Configuration.ApiSettings, _logger).GetEnvelop(envId);
         }

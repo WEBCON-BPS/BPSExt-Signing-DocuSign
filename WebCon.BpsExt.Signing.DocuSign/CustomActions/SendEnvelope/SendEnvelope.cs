@@ -7,18 +7,19 @@ using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
 {
     public class SendEnvelope : CustomAction<SendEnvelopeConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override void Run(RunCustomActionParams args)
+        public override async Task RunAsync(RunCustomActionParams args)
         {
             try
             {           
                 var dataHelper = new DataHelper(_logger, args.Context);
-                var documents = dataHelper.GetDocuments(Configuration);
+                var documents = await dataHelper.GetDocumentsAsync(Configuration);
                 var signers = dataHelper.GetSigners(Configuration);
                
                 var summary = SendEmails(documents, signers);
@@ -48,7 +49,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger.AppendInfo(_logger.ToString());
             }
         }
 
@@ -63,7 +64,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
             var envelope = CreateEnvelope();
             var sendHelper = new EnvelopSendingHelper(_logger, Configuration, Configuration.RecipientsSelection.UseSMS);
             sendHelper.CompleteEnvelopeData(envelope, documents, signers, out string documentsInfoToSave);
-            var apiClient = new ApiClient();
+            var apiClient = new DocuSignClient();
             _logger.AppendLine("Sending envelope");
             var apiHelper = new ApiHelper(apiClient, Configuration.ApiSettings, _logger);
             var result = new Tuple<EnvelopeSummary, string>(apiHelper.SendEnvelope(envelope), documentsInfoToSave);
