@@ -13,7 +13,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
     internal class ApiHelper : ApiHelperBase
     {
-        public ApiHelper(ApiClient apiClient, ApiConfigurationBase config, StringBuilder logger ) : base(apiClient, config, logger)
+        public ApiHelper(DocuSignClient apiClient, ApiConfigurationBase config, StringBuilder logger ) : base(apiClient, config, logger)
         {
         }
 

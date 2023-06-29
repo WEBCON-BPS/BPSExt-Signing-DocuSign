@@ -3,16 +3,17 @@ using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
 using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect
 {
     public class SigningRedirect : CustomAction<SigningRedirectConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override void Run(RunCustomActionParams args)
+        public override Task RunAsync(RunCustomActionParams args)
         {
             var returnUrl = Configuration.RedirectUrl;
-            var apiClient = new ApiClient();
+            var apiClient = new DocuSignClient();
 
             var embededUserInfo = new EmbededUserModel()
             {
@@ -24,6 +25,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect
             };
             var view = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).CreateRecipientView(embededUserInfo, returnUrl);
             args.TransitionInfo.RedirectUrl(view.Url);
+            return Task.CompletedTask;
         }
     }
 

@@ -4,17 +4,18 @@ using System;
 using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope
 {
     public class DeleteEnvelope : CustomAction<DeleteEnvelopeConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override void Run(RunCustomActionParams args)
+        public override Task RunAsync(RunCustomActionParams args)
         {
             try
             {
-                var apiClient = new ApiClient();
+                var apiClient = new DocuSignClient();
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Voiding envelope: {envelopeId}");
                 var summary = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).BlockEnvelope(envelopeId);
@@ -28,8 +29,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger.AppendInfo(_logger.ToString());
             }
+            return Task.CompletedTask;
         }
     }
 }

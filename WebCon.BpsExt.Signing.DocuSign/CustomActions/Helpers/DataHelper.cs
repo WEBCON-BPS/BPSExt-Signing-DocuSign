@@ -7,6 +7,10 @@ using WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
+using WebCon.WorkFlow.SDK.Tools.Other;
+using WebCon.WorkFlow.SDK.Tools.Data;
+using WebCon.WorkFlow.SDK.Documents;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
@@ -27,7 +31,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             var signers = new List<SignerData>();
             foreach (var row in Context.CurrentDocument.ItemsLists.GetByID(Configuration.RecipientsSelection.SignersList.ItemListId).Rows)
             {
-                var signerName = WebCon.WorkFlow.SDK.Tools.Other.TextHelper.GetPairName(row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerNameColumnID).GetValue()?.ToString());
+                var signerName = TextHelper.GetPairName(row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerNameColumnID).GetValue()?.ToString());
                 var signerMail = row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerMailColumnID).GetValue().ToString();
                 var signerPhoneNumber = row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerPhoneNumberColumnID).GetValue().ToString();
                 signers.Add(new SignerData(signerName, signerMail, signerPhoneNumber));
@@ -46,7 +50,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             };
         }
 
-        public List<AttachmentData> GetDocuments(SendEnvelopeConfigurationBase configuration)
+        public async Task<List<AttachmentData>> GetDocumentsAsync(SendEnvelopeConfigurationBase configuration)
         {
             var attachments = new List<AttachmentData>();
             if (configuration.AttachmentSelection.AttachmentsChoosingOption == AttachmentsChoosingOptions.Category)
@@ -61,11 +65,11 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
                 return attachments;
             }
             _logger.AppendLine("Downloading attachments by SQL query");
-            var attIDs = WebCon.WorkFlow.SDK.Tools.Data.SqlExecutionHelper.GetDataTableForSqlCommand(configuration.AttachmentSelection.AttQuery, Context);
-            var manager = new WebCon.WorkFlow.SDK.Documents.DocumentAttachmentsManager(Context);
+            var attIDs = await new SqlExecutionHelper(Context).GetDataTableForSqlCommandAsync(configuration.AttachmentSelection.AttQuery);
+            var manager = new DocumentAttachmentsManager(Context);
             foreach (DataRow row in attIDs.Rows)
             {
-                var att = manager.GetAttachment(row.Field<int>(0));
+                var att = await manager.GetAttachmentAsync(row.Field<int>(0));
                 attachments.Add(att);
             }
             return attachments;

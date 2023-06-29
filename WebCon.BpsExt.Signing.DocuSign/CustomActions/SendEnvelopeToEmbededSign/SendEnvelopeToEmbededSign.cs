@@ -8,18 +8,19 @@ using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
 using System.Collections.Generic;
 using DocuSign.eSign.Client;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
 {
     public class SendEnvelopeToEmbededSign : CustomAction<SendEnvelopeToEmbededSignConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override void Run(RunCustomActionParams args)
+        public override async Task RunAsync(RunCustomActionParams args)
         {
             try
             {
                 var dataHelper = new DataHelper(_logger, args.Context);
-                var documents = dataHelper.GetDocuments(Configuration);
+                var documents = await dataHelper.GetDocumentsAsync(Configuration);
                 var signers = dataHelper.GetEmbededSigner(Configuration);
                 var summary = SendEmails(documents, signers, args.Context);
                 args.Context.CurrentDocument.Fields.GetByID(Configuration.OutputParameters.EnvelopeFieldId).SetValue(summary.EnvelopeId);
@@ -48,7 +49,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger.AppendInfo(_logger.ToString());
             }
         }
 
@@ -59,7 +60,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
             sendHelper.CompleteEnvelopeData(envelope, documents, signer, out string documentsInfoToSave);
             envelope.CompositeTemplates.FirstOrDefault().InlineTemplates.FirstOrDefault().Recipients.Signers.FirstOrDefault().ClientUserId = Guid.NewGuid().ToString();
             SaveEmbededInfoOnForm(context, envelope, documentsInfoToSave);
-            var apiClient = new ApiClient();
+            var apiClient = new DocuSignClient();
             _logger.AppendLine("Sending envelope");          
             return new ApiHelper(apiClient, Configuration.ApiSettings, _logger).SendEnvelope(envelope);
         }
