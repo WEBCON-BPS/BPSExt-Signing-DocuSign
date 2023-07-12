@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using static DocuSign.eSign.Client.Auth.OAuth.UserInfo;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Configuration;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
@@ -15,6 +16,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
         private string AccessToken { get; set; }
         private DateTime expiresAt;
         private Account Account { get; set; }
+        private ConnectionsHelper ConnectionsHelper { get; set; }
         private readonly ApiConfigurationBase Config;
         private readonly StringBuilder _logger;
 
@@ -25,9 +27,10 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             get { return Account.AccountId; }
         }
 
-        public ApiHelperBase(DocuSignClient client, ApiConfigurationBase config, StringBuilder logger)
+        public ApiHelperBase(DocuSignClient client, ConnectionsHelper connectionsHelper, ApiConfigurationBase config, StringBuilder logger)
         {
             ApiClient = client;
+            ConnectionsHelper = connectionsHelper;
             Config = config;
             _logger = logger;
         }
@@ -55,7 +58,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             if (Account == null)
                 Account = GetAccountInfo(authToken);
 
-            ApiClient = new DocuSignClient(Account.BaseUri + "/restapi");
+            string apiBase = Account.BaseUri + "/restapi";
+            ApiClient = new DocuSignClient(apiBase, ConnectionsHelper.GetProxy(apiBase));
             ApiClient.Configuration.DefaultHeader.Add("Authorization", $"Bearer {AccessToken}");
             expiresAt = DateTime.Now.AddSeconds(authToken.expires_in.Value);
         }
