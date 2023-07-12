@@ -11,6 +11,8 @@ using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model;
 using System.Diagnostics;
 using WebCon.WorkFlow.SDK.Documents;
+using WebCon.WorkFlow.SDK.Tools.Data;
+using System.Net;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
 {
@@ -26,7 +28,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
                 var timer = new Stopwatch();
                 timer.Start();
                 var envelopesToCheck = GetEnvelopesInfo(args.Context);
-                var apiClient = new ApiClient();
+                var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
                 var allEnvelopes = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).ListChanges(Configuration.EnvelopeLifetimeInDays);
                 DoActionsForEnvelopes(allEnvelopes, envelopesToCheck, timer, args.Context);
             }

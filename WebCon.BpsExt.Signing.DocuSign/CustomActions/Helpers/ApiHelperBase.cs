@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using static DocuSign.eSign.Client.Auth.OAuth.UserInfo;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Configuration;
+using WebCon.WorkFlow.SDK.Tools.Data;
+using System.Net;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
@@ -55,7 +57,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             if (Account == null)
                 Account = GetAccountInfo(authToken);
 
-            ApiClient = new ApiClient(Account.BaseUri + "/restapi");
+            string basePath = Account.BaseUri + "/restapi";
+			ApiClient = new ApiClient(basePath, ConnectionsHelper.GetProxy(basePath) as WebProxy);
             ApiClient.Configuration.DefaultHeader.Add("Authorization", $"Bearer {AccessToken}");
             expiresAt = DateTime.Now.AddSeconds(authToken.expires_in.Value);
         }

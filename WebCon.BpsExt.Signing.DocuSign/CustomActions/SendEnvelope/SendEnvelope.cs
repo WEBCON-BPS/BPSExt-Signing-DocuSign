@@ -7,6 +7,8 @@ using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
+using System.Net;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
 {
@@ -63,8 +65,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
             var envelope = CreateEnvelope();
             var sendHelper = new EnvelopSendingHelper(_logger, Configuration, Configuration.RecipientsSelection.UseSMS);
             sendHelper.CompleteEnvelopeData(envelope, documents, signers, out string documentsInfoToSave);
-            var apiClient = new ApiClient();
-            _logger.AppendLine("Sending envelope");
+			var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
+			_logger.AppendLine("Sending envelope");
             var apiHelper = new ApiHelper(apiClient, Configuration.ApiSettings, _logger);
             var result = new Tuple<EnvelopeSummary, string>(apiHelper.SendEnvelope(envelope), documentsInfoToSave);
             return result;

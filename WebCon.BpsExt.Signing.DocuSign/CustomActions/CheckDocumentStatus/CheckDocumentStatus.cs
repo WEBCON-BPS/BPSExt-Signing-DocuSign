@@ -5,6 +5,8 @@ using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
 using DocuSign.eSign.Client;
 using DocuSign.eSign.Model;
+using System.Net;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
 {
@@ -35,8 +37,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
         private Envelope GetEnvelope(ActionContextInfo context)
         {
             var envId = context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeFieldId).GetValue().ToString();
-            var apiClient = new ApiClient();
-            _logger.AppendLine("Downloading envelope");
+			var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
+			_logger.AppendLine("Downloading envelope");
             return new ApiHelper(apiClient, Configuration.ApiSettings, _logger).GetEnvelop(envId);
         }
     }

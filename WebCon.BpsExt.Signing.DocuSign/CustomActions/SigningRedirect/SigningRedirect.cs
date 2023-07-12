@@ -3,6 +3,8 @@ using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
 using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
+using System.Net;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect
 {
@@ -12,9 +14,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect
         public override void Run(RunCustomActionParams args)
         {
             var returnUrl = Configuration.RedirectUrl;
-            var apiClient = new ApiClient();
+			var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
 
-            var embededUserInfo = new EmbededUserModel()
+			var embededUserInfo = new EmbededUserModel()
             {
                 Name = args.Context.CurrentDocument.Fields.GetByID(Configuration.EmbededUserNameFieldId).GetValue().ToString(),
                 Mail = args.Context.CurrentDocument.Fields.GetByID(Configuration.EmbededUserMailFieldId).GetValue().ToString(),
