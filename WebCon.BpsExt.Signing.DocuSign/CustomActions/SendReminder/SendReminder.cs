@@ -5,6 +5,7 @@ using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using System.Threading.Tasks;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder
 {
@@ -15,10 +16,11 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder
         {
             try
             {
-                var apiClient = new DocuSignClient();
+                ConnectionsHelper connectionsHelper = new ConnectionsHelper(args.Context);
+                var apiClient = new DocuSignClient(DocuSignClient.Production_REST_BasePath, connectionsHelper.GetProxy(DocuSignClient.Production_REST_BasePath));
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.EnvelopeSettings.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Sending reminder to recipients of envelope: {envelopeId}");
-                var summary = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).ResendEnvelope(envelopeId);
+                var summary = new ApiHelper(apiClient, connectionsHelper, Configuration.ApiSettings, _logger).ResendEnvelope(envelopeId);
             }
             catch (Exception ex)
             {

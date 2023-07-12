@@ -9,16 +9,19 @@ using System.Collections.Generic;
 using DocuSign.eSign.Client;
 using System.Linq;
 using System.Threading.Tasks;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
 {
     public class SendEnvelopeToEmbededSign : CustomAction<SendEnvelopeToEmbededSignConfig>
     {
+        private ConnectionsHelper ConnectionsHelper;
         readonly StringBuilder _logger = new StringBuilder();
         public override async Task RunAsync(RunCustomActionParams args)
         {
             try
             {
+                ConnectionsHelper = new ConnectionsHelper(args.Context);
                 var dataHelper = new DataHelper(_logger, args.Context);
                 var documents = await dataHelper.GetDocumentsAsync(Configuration);
                 var signers = dataHelper.GetEmbededSigner(Configuration);
@@ -60,9 +63,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
             sendHelper.CompleteEnvelopeData(envelope, documents, signer, out string documentsInfoToSave);
             envelope.CompositeTemplates.FirstOrDefault().InlineTemplates.FirstOrDefault().Recipients.Signers.FirstOrDefault().ClientUserId = Guid.NewGuid().ToString();
             SaveEmbededInfoOnForm(context, envelope, documentsInfoToSave);
-            var apiClient = new DocuSignClient();
+            var apiClient = new DocuSignClient(DocuSignClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(DocuSignClient.Production_REST_BasePath));
             _logger.AppendLine("Sending envelope");          
-            return new ApiHelper(apiClient, Configuration.ApiSettings, _logger).SendEnvelope(envelope);
+            return new ApiHelper(apiClient, ConnectionsHelper, Configuration.ApiSettings, _logger).SendEnvelope(envelope);
         }
         private EnvelopeDefinition CreateEnvelope()
         {

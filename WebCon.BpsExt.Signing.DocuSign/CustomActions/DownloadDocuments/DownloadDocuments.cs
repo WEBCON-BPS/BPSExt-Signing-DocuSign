@@ -11,6 +11,7 @@ using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
 using WebCon.WorkFlow.SDK.Tools.Other;
 using System.Threading.Tasks;
 using WebCon.WorkFlow.SDK.Documents;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
 {
@@ -21,10 +22,11 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
         {
             try
             {
-                var apiClient = new DocuSignClient();
+                ConnectionsHelper connectionsHelper = new ConnectionsHelper(args.Context);
+                var apiClient = new DocuSignClient(DocuSignClient.Production_REST_BasePath, connectionsHelper.GetProxy(DocuSignClient.Production_REST_BasePath));
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.DocumentSettings.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Downloading documents for envelope : {envelopeId}");
-                var documents = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).DownloadDocuments(envelopeId);
+                var documents = new ApiHelper(apiClient, connectionsHelper, Configuration.ApiSettings, _logger).DownloadDocuments(envelopeId);
                 await AddDocumentsToAttachmentsAsync(documents, args.Context);
             }
             catch (Exception ex)

@@ -8,16 +8,19 @@ using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
 using System.Threading.Tasks;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
 {
     public class SendEnvelope : CustomAction<SendEnvelopeConfig>
     {
+        private ConnectionsHelper ConnectionsHelper;
         readonly StringBuilder _logger = new StringBuilder();
         public override async Task RunAsync(RunCustomActionParams args)
         {
             try
-            {           
+            {
+                ConnectionsHelper = new ConnectionsHelper(args.Context);
                 var dataHelper = new DataHelper(_logger, args.Context);
                 var documents = await dataHelper.GetDocumentsAsync(Configuration);
                 var signers = dataHelper.GetSigners(Configuration);
@@ -64,9 +67,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
             var envelope = CreateEnvelope();
             var sendHelper = new EnvelopSendingHelper(_logger, Configuration, Configuration.RecipientsSelection.UseSMS);
             sendHelper.CompleteEnvelopeData(envelope, documents, signers, out string documentsInfoToSave);
-            var apiClient = new DocuSignClient();
+            var apiClient = new DocuSignClient(DocuSignClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(DocuSignClient.Production_REST_BasePath));
             _logger.AppendLine("Sending envelope");
-            var apiHelper = new ApiHelper(apiClient, Configuration.ApiSettings, _logger);
+            var apiHelper = new ApiHelper(apiClient, ConnectionsHelper, Configuration.ApiSettings, _logger);
             var result = new Tuple<EnvelopeSummary, string>(apiHelper.SendEnvelope(envelope), documentsInfoToSave);
             return result;
         }
