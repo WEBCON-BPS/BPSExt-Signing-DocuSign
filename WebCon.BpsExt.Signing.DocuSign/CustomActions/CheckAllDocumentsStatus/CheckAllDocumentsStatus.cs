@@ -10,6 +10,9 @@ using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.WorkFlow.SDK.Documents.Model;
 using System.Diagnostics;
+using WebCon.WorkFlow.SDK.Documents;
+using WebCon.WorkFlow.SDK.Tools.Data;
+using System.Net;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
 {
@@ -25,9 +28,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
                 var timer = new Stopwatch();
                 timer.Start();
                 var envelopesToCheck = GetEnvelopesInfo(args.Context);
-                var apiClient = new ApiClient();
+                var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
                 var allEnvelopes = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).ListChanges(Configuration.EnvelopeLifetimeInDays);
-                DoActionsForEnvelopes(allEnvelopes, envelopesToCheck, timer);
+                DoActionsForEnvelopes(allEnvelopes, envelopesToCheck, timer, args.Context);
             }
             catch (Exception ex)
             {
@@ -38,11 +41,11 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
             }
         }
 
-        private void DoActionsForEnvelopes(EnvelopesInformation allEnvelopes, List<EnvelopeInfo> envelopesToCheck, Stopwatch timer)
+        private void DoActionsForEnvelopes(EnvelopesInformation allEnvelopes, List<EnvelopeInfo> envelopesToCheck, Stopwatch timer, ActionWithoutDocumentContext context)
         {
             var maxTime = TimeSpan.FromSeconds(Configuration.MaxExecutionTime);
             foreach (var item in envelopesToCheck)
@@ -55,11 +58,11 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
 
                 _logger.AppendLine($"Processing envelope with id: {item.EnvelopeGuid}");
                 var env = allEnvelopes.Envelopes.FirstOrDefault(x => x.EnvelopeId == item.EnvelopeGuid);
-                ChoosePathForEnvelope(env, item);
+                ChoosePathForEnvelope(env, item, context);
             }
         }
 
-        private void ChoosePathForEnvelope(Envelope env, EnvelopeInfo item)
+        private void ChoosePathForEnvelope(Envelope env, EnvelopeInfo item, ActionWithoutDocumentContext context)
         {
             if(env == null)
             {
@@ -70,13 +73,14 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
             if (env.Status == "created" || env.Status == "sent" || env.Status == "delivered")
                 return;
 
-            var parms = new MoveDocumentToNextStepParams(WebCon.WorkFlow.SDK.Documents.DocumentsManager.GetDocumentByID(item.WfdId, true), Configuration.Workflow.ErrorPathId);
+            var manager = new DocumentsManager(context);
+            var parms = new MoveDocumentToNextStepParams(manager.GetDocumentByID(item.WfdId, true), Configuration.Workflow.ErrorPathId);
             parms.SkipPermissionsCheck = true;
             parms.ForceCheckout = true;
             if (env.Status == "completed")
                 parms.PathID = Configuration.Workflow.SuccessPathId;
 
-            WebCon.WorkFlow.SDK.Documents.DocumentsManager.MoveDocumentToNextStep(parms);
+            manager.MoveDocumentToNextStep(parms);
         }
 
         private List<EnvelopeInfo> GetEnvelopesInfo(ActionWithoutDocumentContext context)

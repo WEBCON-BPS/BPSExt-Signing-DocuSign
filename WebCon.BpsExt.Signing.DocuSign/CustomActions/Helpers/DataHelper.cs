@@ -62,9 +62,10 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             }
             _logger.AppendLine("Downloading attachments by SQL query");
             var attIDs = WebCon.WorkFlow.SDK.Tools.Data.SqlExecutionHelper.GetDataTableForSqlCommand(configuration.AttachmentSelection.AttQuery, Context);
+            var manager = new WebCon.WorkFlow.SDK.Documents.DocumentAttachmentsManager(Context);
             foreach (DataRow row in attIDs.Rows)
             {
-                var att = WebCon.WorkFlow.SDK.Documents.DocumentAttachmentsManager.GetAttachment(row.Field<int>(0));
+                var att = manager.GetAttachment(row.Field<int>(0));
                 attachments.Add(att);
             }
             return attachments;

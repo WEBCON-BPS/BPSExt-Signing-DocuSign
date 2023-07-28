@@ -8,6 +8,8 @@ using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
 using System.Collections.Generic;
 using DocuSign.eSign.Client;
 using System.Linq;
+using System.Net;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
 {
@@ -48,7 +50,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
             }
         }
 
@@ -59,8 +61,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
             sendHelper.CompleteEnvelopeData(envelope, documents, signer, out string documentsInfoToSave);
             envelope.CompositeTemplates.FirstOrDefault().InlineTemplates.FirstOrDefault().Recipients.Signers.FirstOrDefault().ClientUserId = Guid.NewGuid().ToString();
             SaveEmbededInfoOnForm(context, envelope, documentsInfoToSave);
-            var apiClient = new ApiClient();
-            _logger.AppendLine("Sending envelope");          
+			var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
+			_logger.AppendLine("Sending envelope");          
             return new ApiHelper(apiClient, Configuration.ApiSettings, _logger).SendEnvelope(envelope);
         }
         private EnvelopeDefinition CreateEnvelope()

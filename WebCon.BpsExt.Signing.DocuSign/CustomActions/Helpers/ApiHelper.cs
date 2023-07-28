@@ -27,7 +27,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
         private EnvelopesApi PrepareApi()
         {
            CheckToken();
-           return new EnvelopesApi(ApiClient.Configuration);
+           return new EnvelopesApi(ApiClient);
         }
 
         public Envelope GetEnvelop(string envelopeId)

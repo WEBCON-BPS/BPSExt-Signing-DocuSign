@@ -4,6 +4,8 @@ using System;
 using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
+using System.Net;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder
 {
@@ -14,8 +16,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder
         {
             try
             {
-                var apiClient = new ApiClient();
-                var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.EnvelopeSettings.EnvelopeGUIDFieldId).GetValue().ToString();
+				var apiClient = new ApiClient(ApiClient.Production_REST_BasePath, ConnectionsHelper.GetProxy(ApiClient.Production_REST_BasePath) as WebProxy);
+				var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.EnvelopeSettings.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Sending reminder to recipients of envelope: {envelopeId}");
                 var summary = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).ResendEnvelope(envelopeId);
             }
@@ -28,7 +30,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder
             finally
             {
                 args.LogMessage = _logger.ToString();
-                args.Context.PluginLogger.AppendInfo(_logger.ToString());
+                args.Context.PluginLogger?.AppendInfo(_logger.ToString());
             }
         }
     }
