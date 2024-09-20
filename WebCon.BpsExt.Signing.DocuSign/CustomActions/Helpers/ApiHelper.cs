@@ -8,12 +8,13 @@ using System.IO;
 using static DocuSign.eSign.Api.EnvelopesApi;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Configuration;
+using WebCon.WorkFlow.SDK.Tools.Data;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
     internal class ApiHelper : ApiHelperBase
     {
-        public ApiHelper(DocuSignClient apiClient, ApiConfigurationBase config, StringBuilder logger ) : base(apiClient, config, logger)
+        public ApiHelper(DocuSignClient apiClient, ConnectionsHelper connectionsHelper, ApiConfigurationBase config, StringBuilder logger ) : base(apiClient, connectionsHelper, config, logger)
         {
         }
 
