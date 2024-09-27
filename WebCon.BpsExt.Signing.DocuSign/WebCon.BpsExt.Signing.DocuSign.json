@@ -1,66 +1,82 @@
-[
-  {
-    "Guid": "8dcc32fd-9021-47f6-9ece-e06cee37cb97",
-    "Name": "SendEnvelopeToEmbededSign",
-    "Description": "Use this action to send selected documents to sign by the current user.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign.SendEnvelopeToEmbededSign",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "c4b60ae5-ca7c-4571-a541-b27524bcc040",
-    "Name": "SigningRedirect",
-    "Description": "Use this action on the path to redirect from signing site to the current element.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect.SigningRedirect",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "82117082-f2eb-4bef-9f12-c459593d4fab",
-    "Name": "SendReminder",
-    "Description": "Use this action to send an e-mail as a reminder to sign the document to selected people.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder.SendReminder",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "c9e8768a-874c-453b-b3d3-f1303c8b9746",
-    "Name": "DownloadDocuments",
-    "Description": "The action downloads related signed document.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments.DownloadDocuments",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "ade8ef83-3efb-4f92-ad44-86649dacb1d5",
-    "Name": "DeleteEnvelope",
-    "Description": "This action allows you to cancel signing the document.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope.DeleteEnvelope",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "618040ff-cb89-4f98-9d61-7db684276bc9",
-    "Name": "CheckAllDocumentsStatus",
-    "Description": "Use this action to check the status of all documents sent to be signed and move all signed documents along the selected path.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus.CheckAllDocumentsStatus",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "f7ad3e95-1767-4506-9f66-2f6a0c8478fc",
-    "Name": "CheckDocumentStatus",
-    "Description": "This action checks the current status of the document sent to be signed.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus.CheckDocumentStatus",
-    "Type": "CustomAction"
-  },
-  {
-    "Guid": "9f66dd0d-3978-41f2-8876-08b617d24912",
-    "Name": "SendEnvelope",
-    "Description": "Action sends selected documents to be signed in DocuSign.",
-    "Assembly": "WebCon.BpsExt.Signing.DocuSign",
-    "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope.SendEnvelope",
-    "Type": "CustomAction"
-  }
-]
+﻿{
+    "extensions": [
+        {
+            "Guid": "8dcc32fd-9021-47f6-9ece-e06cee37cb97",
+            "Name": "SendEnvelopeToEmbededSign",
+            "Description": "Use this action to send selected documents to sign by the current user.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign.SendEnvelopeToEmbededSign",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "c4b60ae5-ca7c-4571-a541-b27524bcc040",
+            "Name": "SigningRedirect",
+            "Description": "Use this action on the path to redirect from signing site to the current element.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect.SigningRedirect",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "82117082-f2eb-4bef-9f12-c459593d4fab",
+            "Name": "SendReminder",
+            "Description": "Use this action to send an e-mail as a reminder to sign the document to selected people.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SendReminder.SendReminder",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "c9e8768a-874c-453b-b3d3-f1303c8b9746",
+            "Name": "DownloadDocuments",
+            "Description": "The action downloads related signed document.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments.DownloadDocuments",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "ade8ef83-3efb-4f92-ad44-86649dacb1d5",
+            "Name": "DeleteEnvelope",
+            "Description": "This action allows you to cancel signing the document.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope.DeleteEnvelope",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "618040ff-cb89-4f98-9d61-7db684276bc9",
+            "Name": "CheckAllDocumentsStatus",
+            "Description": "Use this action to check the status of all documents sent to be signed and move all signed documents along the selected path.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus.CheckAllDocumentsStatus",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "f7ad3e95-1767-4506-9f66-2f6a0c8478fc",
+            "Name": "CheckDocumentStatus",
+            "Description": "This action checks the current status of the document sent to be signed.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus.CheckDocumentStatus",
+            "Type": "CustomAction"
+        },
+        {
+            "Guid": "9f66dd0d-3978-41f2-8876-08b617d24912",
+            "Name": "SendEnvelope",
+            "Description": "Action sends selected documents to be signed in DocuSign.",
+            "Assembly": "WebCon.BpsExt.Signing.DocuSign",
+            "Class": "WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope.SendEnvelope",
+            "Type": "CustomAction"
+        }
+    ],
+    "dependencies": [
+        "WebCon.BpsExt.Signing.DocuSign",
+        "DocuSign.eSign",
+        "BouncyCastle.Cryptography",
+        "Microsoft.IdentityModel.JsonWebTokens",
+        "Microsoft.IdentityModel.Logging",
+        "Microsoft.IdentityModel.Protocols",
+        "Microsoft.IdentityModel.Tokens",
+        "System.IdentityModel.Tokens.Jwt"
+    ],
+    "serviceDependenciesPaths": [
+        "ServiceReferenceDll"
+    ],
+    "version": "24"
+}

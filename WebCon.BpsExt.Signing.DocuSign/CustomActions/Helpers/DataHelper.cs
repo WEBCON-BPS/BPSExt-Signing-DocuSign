@@ -32,8 +32,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             foreach (var row in Context.CurrentDocument.ItemsLists.GetByID(Configuration.RecipientsSelection.SignersList.ItemListId).Rows)
             {
                 var signerName = TextHelper.GetPairName(row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerNameColumnID).GetValue()?.ToString());
-                var signerMail = row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerMailColumnID).GetValue().ToString();
-                var signerPhoneNumber = row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerPhoneNumberColumnID).GetValue().ToString();
+                var signerMail = row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerMailColumnID).GetValue()?.ToString();
+                var signerPhoneNumber = row.Cells.GetByID(Configuration.RecipientsSelection.SignersList.SignerPhoneNumberColumnID).GetValue()?.ToString();
                 signers.Add(new SignerData(signerName, signerMail, signerPhoneNumber));
             }
 

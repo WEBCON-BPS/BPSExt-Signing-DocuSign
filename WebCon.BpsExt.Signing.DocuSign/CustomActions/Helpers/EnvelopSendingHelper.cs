@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using WebCon.WorkFlow.SDK.Documents.Model.Attachments;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
@@ -22,9 +23,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             UseSms = useSms;
         }
 
-        public void CompleteEnvelopeData(EnvelopeDefinition env, List<AttachmentData> documents, List<SignerData> signers, out string documentsInfoToSave)
+        public async Task<string> CompleteEnvelopeDataAsync(EnvelopeDefinition env, List<AttachmentData> documents, List<SignerData> signers)
         {
-            var doc = CreateDocuments(documents, out documentsInfoToSave);
+            var creatingResult = await CreateDocumentsAsync(documents);
             var recps = CreateSigners(signers);
             var templates = new List<CompositeTemplate>();
             templates.Add(new CompositeTemplate()
@@ -35,12 +36,13 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
                           {
                                Sequence = "1",
                                Recipients = recps,
-                               Documents = doc
+                               Documents = creatingResult.documents
                           }
                       }
             });
             env.CompositeTemplates = templates;
             _logger.AppendLine("Envelope data completed");
+            return creatingResult.documentsInfoToSave;
         }
 
         public Recipients CreateSigners(List<SignerData> signersData)
@@ -80,16 +82,17 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             return signer;
         }
 
-        private List<Document> CreateDocuments(List<AttachmentData> docs, out string documentsInfoToSave)
+        private async Task<(List<Document> documents, string documentsInfoToSave)> CreateDocumentsAsync(List<AttachmentData> docs)
         {
             _logger.AppendLine("Adding documents to Envelope");
             var documents = new List<Document>();
-            documentsInfoToSave = string.Empty;
+            var documentsInfoToSave = string.Empty;
             foreach (var doc in docs.Select((value, i) => new { i, value }))
             {
+                var content = await doc.value.GetContentAsync();
                 documents.Add(new Document()
                 {
-                    DocumentBase64 = Convert.ToBase64String(doc.value.Content),
+                    DocumentBase64 = Convert.ToBase64String(content),
                     DocumentId = (doc.i + 1).ToString(),
                     FileExtension = doc.value.FileExtension,
                     Name = doc.value.FileName,
@@ -97,7 +100,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
                 });
                 documentsInfoToSave += $"{doc.value.ID}#{doc.i + 1};";
             }
-            return documents;
+            return (documents, documentsInfoToSave);
         }
     }
 }

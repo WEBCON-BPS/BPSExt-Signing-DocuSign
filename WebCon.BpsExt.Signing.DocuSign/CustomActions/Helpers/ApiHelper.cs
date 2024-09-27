@@ -8,6 +8,7 @@ using System.IO;
 using static DocuSign.eSign.Api.EnvelopesApi;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Configuration;
+using System.Threading.Tasks;
 
 namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
 {
@@ -17,10 +18,10 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
         {
         }
 
-        public EnvelopeSummary SendEnvelope(EnvelopeDefinition envelope)
+        public async Task<EnvelopeSummary> SendEnvelopeAsync(EnvelopeDefinition envelope)
         {
             var envelopeApi = PrepareApi();
-            var results = envelopeApi.CreateEnvelope(AccountID, envelope);
+            var results = await envelopeApi.CreateEnvelopeAsync(AccountID, envelope);
             return results;
         }
 
@@ -30,41 +31,41 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
            return new EnvelopesApi(ApiClient);
         }
 
-        public Envelope GetEnvelop(string envelopeId)
+        public async Task<Envelope> GetEnvelopAsync(string envelopeId)
         {
             var envelopeApi = PrepareApi();
-            return envelopeApi.GetEnvelope(AccountID, envelopeId);
+            return await envelopeApi.GetEnvelopeAsync(AccountID, envelopeId);
         }
 
-        public EnvelopeUpdateSummary BlockEnvelope(string envelopeId)
+        public async Task<EnvelopeUpdateSummary> BlockEnvelopeAsync(string envelopeId)
         {          
             var envelope =  new Envelope();
             var envelopeApi = PrepareApi();
             envelope.Status = "voided";
             envelope.VoidedReason = "Deleted";
-            return envelopeApi.Update(AccountID, envelopeId, envelope);
+            return await envelopeApi.UpdateAsync(AccountID, envelopeId, envelope);
         }
 
-        public RecipientsUpdateSummary ResendEnvelope(string envelopeId)
+        public async Task<RecipientsUpdateSummary> ResendEnvelopeAsync(string envelopeId)
         {
-            var recipients = GetRecipients(envelopeId);
+            var recipients = await GetRecipientsAsync(envelopeId);
             var envelopeApi = PrepareApi();
             var options = new UpdateRecipientsOptions()
             {
                 resendEnvelope = true.ToString()
             };
-            return envelopeApi.UpdateRecipients(AccountID, envelopeId, recipients, options);
+            return await envelopeApi.UpdateRecipientsAsync(AccountID, envelopeId, recipients, options);
         }
 
-        internal Recipients GetRecipients(string envelopeId)
+        internal async Task<Recipients> GetRecipientsAsync(string envelopeId)
         {
             var envelopeApi = PrepareApi();
-            return envelopeApi.ListRecipients(AccountID, envelopeId);
+            return await envelopeApi.ListRecipientsAsync(AccountID, envelopeId);
         }
 
-        public List<DocumentFromEnvelope> DownloadDocuments(string envelopeId)
+        public async Task<List<DocumentFromEnvelope>> DownloadDocumentsAsync(string envelopeId)
         {
-            var documents = ListDocuments(envelopeId);
+            var documents = await ListDocumentsAsync(envelopeId);
             var envelopesApi = PrepareApi();
             var downloadedDocuments = new List<DocumentFromEnvelope>();
             foreach (var doc in documents)
@@ -72,7 +73,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
                 if (doc.DocumentId == "certificate")
                     continue;
 
-                var results = envelopesApi.GetDocument(AccountID, envelopeId, doc.DocumentId);
+                var results = await envelopesApi.GetDocumentAsync(AccountID, envelopeId, doc.DocumentId);
                 string docName = doc.Name;
                 bool hasPDFsuffix = docName.ToUpper().EndsWith(".PDF");
                 bool pdfFile = hasPDFsuffix;
@@ -101,10 +102,10 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             return downloadedDocuments;
         }
 
-        internal List<EnvelopeDocItem> ListDocuments(string envelopeId)
+        internal async Task<List<EnvelopeDocItem>> ListDocumentsAsync(string envelopeId)
         {
             var envelopesApi = PrepareApi();
-            var results = envelopesApi.ListDocuments(AccountID, envelopeId);
+            var results = await envelopesApi.ListDocumentsAsync(AccountID, envelopeId);
             var envelopeDocItems = new List<EnvelopeDocItem>();
 
             foreach (EnvelopeDocument doc in results.EnvelopeDocuments)
@@ -119,16 +120,16 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
             return envelopeDocItems;
         }
 
-        public EnvelopesInformation ListChanges(int envelopeLifetimeInDays)
+        public async Task<EnvelopesInformation> ListChangesAsync(int envelopeLifetimeInDays)
         {
             var envelopeApi = PrepareApi();
             var options = new ListStatusChangesOptions();
             var date = DateTime.Now.AddDays(-envelopeLifetimeInDays);
             options.fromDate = date.ToString("yyyy/MM/dd");
-            return envelopeApi.ListStatusChanges(AccountID, options);
+            return await envelopeApi.ListStatusChangesAsync(AccountID, options);
         }
 
-        public ViewUrl CreateRecipientView(EmbededUserModel embededUserInfo, string returnUrl)
+        public async Task<ViewUrl> CreateRecipientViewAsync(EmbededUserModel embededUserInfo, string returnUrl)
         {
             var envelopeApi = PrepareApi();
             var view = new RecipientViewRequest()
@@ -140,7 +141,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers
                 AuthenticationMethod = "email",
                 ReturnUrl = returnUrl
             };
-            return envelopeApi.CreateRecipientView(AccountID, embededUserInfo.EnvelopeId, view);
+            return await envelopeApi.CreateRecipientViewAsync(AccountID, embededUserInfo.EnvelopeId, view);
         }
 
 
