@@ -10,7 +10,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect
     public class SigningRedirect : CustomAction<SigningRedirectConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override Task RunAsync(RunCustomActionParams args)
+        public override async Task RunAsync(RunCustomActionParams args)
         {
             var returnUrl = Configuration.RedirectUrl;
             var apiClient = new DocuSignClient();
@@ -23,9 +23,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SigningRedirect
                 ClientUserId = args.Context.CurrentDocument.Fields.GetByID(Configuration.EmbededClientUserIdFieldId).GetValue().ToString(),
                 EnvelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.EnvelopeGUIDFieldId).GetValue().ToString()
             };
-            var view = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).CreateRecipientView(embededUserInfo, returnUrl);
+            var view = await  new ApiHelper(apiClient, Configuration.ApiSettings, _logger).CreateRecipientViewAsync(embededUserInfo, returnUrl);
             args.TransitionInfo.RedirectUrl(view.Url);
-            return Task.CompletedTask;
         }
     }
 

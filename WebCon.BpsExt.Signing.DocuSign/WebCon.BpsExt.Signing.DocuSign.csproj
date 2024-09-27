@@ -73,9 +73,9 @@
     <Folder Include="Publish\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DocuSign.eSign.dll" Version="6.4.2" />
+    <PackageReference Include="DocuSign.eSign.dll" Version="6.8.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="WEBCON.BPS.2023.SDK.Libraries" Version="23.1.1.38" />
+    <PackageReference Include="WEBCON.BPS.2024.SDK.Libraries" Version="24.1.1.25" />
   </ItemGroup>
 </Project>

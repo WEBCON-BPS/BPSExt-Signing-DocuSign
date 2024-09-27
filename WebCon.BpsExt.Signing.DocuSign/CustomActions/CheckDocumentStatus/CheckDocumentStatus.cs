@@ -12,13 +12,13 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
     public class CheckDocumentStatus : CustomAction<CheckDocumentStatusConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override Task RunAsync(RunCustomActionParams args)
+        public override async Task RunAsync(RunCustomActionParams args)
         {
             try
             {
-                var env = GetEnvelope(args.Context);
+                var env = await GetEnvelopeAsync(args.Context);
                 _logger.AppendLine("Setting field");
-                args.Context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.StatusFieldId).SetValue(env.Status);
+                await args.Context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.StatusFieldId).SetValueAsync(env.Status);
             }
             catch (Exception ex)
             {
@@ -31,15 +31,14 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
                 args.LogMessage = _logger.ToString();
                 args.Context.PluginLogger.AppendInfo(_logger.ToString());           
             }
-            return Task.CompletedTask;
         }
 
-        private Envelope GetEnvelope(ActionContextInfo context)
+        private async Task<Envelope> GetEnvelopeAsync(ActionContextInfo context)
         {
             var envId = context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeFieldId).GetValue().ToString();
             var apiClient = new DocuSignClient();
             _logger.AppendLine("Downloading envelope");
-            return new ApiHelper(apiClient, Configuration.ApiSettings, _logger).GetEnvelop(envId);
+            return await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).GetEnvelopAsync(envId);
         }
     }
 }

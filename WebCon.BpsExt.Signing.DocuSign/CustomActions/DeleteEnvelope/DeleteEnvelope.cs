@@ -11,14 +11,14 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope
     public class DeleteEnvelope : CustomAction<DeleteEnvelopeConfig>
     {
         readonly StringBuilder _logger = new StringBuilder();
-        public override Task RunAsync(RunCustomActionParams args)
+        public override async Task RunAsync(RunCustomActionParams args)
         {
             try
             {
                 var apiClient = new DocuSignClient();
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Voiding envelope: {envelopeId}");
-                var summary = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).BlockEnvelope(envelopeId);
+                await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).BlockEnvelopeAsync(envelopeId);
             }
             catch (Exception ex)
             {
@@ -31,7 +31,6 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope
                 args.LogMessage = _logger.ToString();
                 args.Context.PluginLogger.AppendInfo(_logger.ToString());
             }
-            return Task.CompletedTask;
         }
     }
 }

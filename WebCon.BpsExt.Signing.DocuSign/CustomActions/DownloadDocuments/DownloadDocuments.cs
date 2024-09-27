@@ -24,7 +24,7 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
                 var apiClient = new DocuSignClient();
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.DocumentSettings.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Downloading documents for envelope : {envelopeId}");
-                var documents = new ApiHelper(apiClient, Configuration.ApiSettings, _logger).DownloadDocuments(envelopeId);
+                var documents = await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).DownloadDocumentsAsync(envelopeId);
                 await AddDocumentsToAttachmentsAsync(documents, args.Context);
             }
             catch (Exception ex)
@@ -53,14 +53,14 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
                 if (string.IsNullOrEmpty(Configuration.Output.Suffix) && !string.IsNullOrEmpty(currentDocAttId))
                 {
                     var att = await context.CurrentDocument.Attachments.GetByIDAsync(Int32.Parse(currentDocAttId));
-                    att.Content = doc.DocumentContent;
+                    att.SetContent(doc.DocumentContent);
                     if (!string.IsNullOrEmpty(Configuration.Output.GroupName))
                         await SetFileGroup(att, Configuration.Output.GroupName);
                 }              
                 else
                 {
                     
-                    var att = manager.GetNewAttachment(CreateNameWithSuffix(doc.Name), doc.DocumentContent);
+                    var att = await manager.GetNewAttachmentAsync(CreateNameWithSuffix(doc.Name), doc.DocumentContent);
                     if (!string.IsNullOrEmpty(Configuration.Output.GroupName))
                         await SetFileGroup(att, Configuration.Output.GroupName);
 

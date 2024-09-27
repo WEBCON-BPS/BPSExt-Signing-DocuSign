@@ -22,8 +22,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
                 var documents = await dataHelper.GetDocumentsAsync(Configuration);
                 var signers = dataHelper.GetSigners(Configuration);
                
-                var summary = SendEmails(documents, signers);
-                SetFields(summary, args.Context);           
+                var summary = await SendEmailsAsync(documents, signers);
+                await SetFieldsAsync(summary, args.Context);           
             }
             catch (ApiException e)
             {
@@ -53,21 +53,22 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelope
             }
         }
 
-        private void SetFields(Tuple<EnvelopeSummary, string> summary, ActionContextInfo context)
+        private async Task SetFieldsAsync(Tuple<EnvelopeSummary, string> summary, ActionContextInfo context)
         {
-            context.CurrentDocument.Fields.GetByID(Configuration.OutputParameters.EnvelopeFieldId).SetValue(summary.Item1.EnvelopeId);
-            context.CurrentDocument.Fields.GetByID(Configuration.OutputParameters.TechnicalFieldID).SetValue(summary.Item2);
+            await context.CurrentDocument.Fields.GetByID(Configuration.OutputParameters.EnvelopeFieldId).SetValueAsync(summary.Item1.EnvelopeId);
+            await context.CurrentDocument.Fields.GetByID(Configuration.OutputParameters.TechnicalFieldID).SetValueAsync(summary.Item2);
         }
 
-        private Tuple<EnvelopeSummary, string> SendEmails(List<AttachmentData> documents, List<SignerData> signers)
+        private async Task<Tuple<EnvelopeSummary, string>> SendEmailsAsync(List<AttachmentData> documents, List<SignerData> signers)
         {          
             var envelope = CreateEnvelope();
             var sendHelper = new EnvelopSendingHelper(_logger, Configuration, Configuration.RecipientsSelection.UseSMS);
-            sendHelper.CompleteEnvelopeData(envelope, documents, signers, out string documentsInfoToSave);
+            var documentsInfoToSave = await sendHelper.CompleteEnvelopeDataAsync(envelope, documents, signers);
             var apiClient = new DocuSignClient();
             _logger.AppendLine("Sending envelope");
             var apiHelper = new ApiHelper(apiClient, Configuration.ApiSettings, _logger);
-            var result = new Tuple<EnvelopeSummary, string>(apiHelper.SendEnvelope(envelope), documentsInfoToSave);
+            var envelopeResult = await apiHelper.SendEnvelopeAsync(envelope);
+            var result = new Tuple<EnvelopeSummary, string>(envelopeResult, documentsInfoToSave);
             return result;
         }
         private EnvelopeDefinition CreateEnvelope()
