@@ -21,10 +21,10 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DownloadDocuments
         {
             try
             {
-                var apiClient = new DocuSignClient();
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.DocumentSettings.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Downloading documents for envelope : {envelopeId}");
-                var documents = await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).DownloadDocumentsAsync(envelopeId);
+                var helper = ApiHelper.Create(Configuration.ApiSettings, args.Context);
+                var documents = await helper.DownloadDocumentsAsync(envelopeId);
                 await AddDocumentsToAttachmentsAsync(documents, args.Context);
             }
             catch (Exception ex)

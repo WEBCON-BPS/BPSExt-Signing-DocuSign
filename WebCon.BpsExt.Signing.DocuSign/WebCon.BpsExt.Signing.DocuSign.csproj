@@ -50,9 +50,10 @@
     <Compile Include="CustomActions\DownloadDocuments\DownloadDocuments.cs" />
     <Compile Include="CustomActions\DownloadDocuments\DownloadDocumentsConfig.cs" />
     <Compile Include="CustomActions\Helpers\ApiHelper.cs" />
-    <Compile Include="CustomActions\Helpers\ApiHelperBase.cs" />
+    <Compile Include="CustomActions\Helpers\EnvelopesApiProvider.cs" />
     <Compile Include="CustomActions\Helpers\DataHelper.cs" />
     <Compile Include="CustomActions\Helpers\EnvelopSendingHelper.cs" />
+    <Compile Include="CustomActions\Helpers\ProxyProvider.cs" />
     <Compile Include="CustomActions\SendEnvelopeToEmbededSign\SendEnvelopeToEmbededSign.cs" />
     <Compile Include="CustomActions\SendEnvelopeToEmbededSign\SendEnvelopeToEmbededSignConfig.cs" />
     <Compile Include="CustomActions\SendEnvelope\SendEnvelope.cs" />
@@ -76,6 +77,6 @@
     <PackageReference Include="DocuSign.eSign.dll" Version="6.8.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="WEBCON.BPS.2024.SDK.Libraries" Version="24.1.1.25" />
+    <PackageReference Include="WEBCON.BPS.2025.SDK.Libraries" Version="25.1.1.15" />
   </ItemGroup>
 </Project>

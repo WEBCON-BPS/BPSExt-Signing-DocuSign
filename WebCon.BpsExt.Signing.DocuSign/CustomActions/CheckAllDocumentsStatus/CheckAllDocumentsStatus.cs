@@ -28,8 +28,8 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckAllDocumentsStatus
                 var timer = new Stopwatch();
                 timer.Start();
                 var envelopesToCheck = await GetEnvelopesInfoAsync(args.Context);
-                var apiClient = new DocuSignClient();
-                var allEnvelopes = await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).ListChangesAsync(Configuration.EnvelopeLifetimeInDays);
+                var helper = ApiHelper.Create(Configuration.ApiSettings, args.Context);
+                var allEnvelopes = await helper.ListChangesAsync(Configuration.EnvelopeLifetimeInDays);
                 await DoActionsForEnvelopesAsync(allEnvelopes, envelopesToCheck, timer, args.Context);
             }
             catch (Exception ex)

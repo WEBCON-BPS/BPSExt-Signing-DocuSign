@@ -60,9 +60,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.SendEnvelopeToEmbededSign
             var documentsInfoToSave = await sendHelper.CompleteEnvelopeDataAsync(envelope, documents, signer);
             envelope.CompositeTemplates.FirstOrDefault().InlineTemplates.FirstOrDefault().Recipients.Signers.FirstOrDefault().ClientUserId = Guid.NewGuid().ToString();
             await SaveEmbededInfoOnFormAsync(context, envelope, documentsInfoToSave);
-            var apiClient = new DocuSignClient();
+            var helper = ApiHelper.Create(Configuration.ApiSettings, context);
             _logger.AppendLine("Sending envelope");          
-            return await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).SendEnvelopeAsync(envelope);
+            return await helper.SendEnvelopeAsync(envelope);
         }
         private EnvelopeDefinition CreateEnvelope()
         {
