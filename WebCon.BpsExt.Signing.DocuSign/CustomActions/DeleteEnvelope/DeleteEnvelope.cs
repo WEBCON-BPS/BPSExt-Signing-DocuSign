@@ -1,5 +1,4 @@
-﻿using DocuSign.eSign.Client;
-using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
+﻿using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
 using System;
 using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
@@ -15,10 +14,10 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.DeleteEnvelope
         {
             try
             {
-                var apiClient = new DocuSignClient();
                 var envelopeId = args.Context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeGUIDFieldId).GetValue().ToString();
                 _logger.AppendLine($"Voiding envelope: {envelopeId}");
-                await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).BlockEnvelopeAsync(envelopeId);
+                var helper = ApiHelper.Create(Configuration.ApiSettings, args.Context);
+                await helper.BlockEnvelopeAsync(envelopeId);
             }
             catch (Exception ex)
             {

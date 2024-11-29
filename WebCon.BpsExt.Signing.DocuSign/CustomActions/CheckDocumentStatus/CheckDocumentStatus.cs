@@ -3,7 +3,6 @@ using System.Text;
 using WebCon.WorkFlow.SDK.ActionPlugins;
 using WebCon.WorkFlow.SDK.ActionPlugins.Model;
 using WebCon.BpsExt.Signing.DocuSign.CustomActions.Helpers;
-using DocuSign.eSign.Client;
 using DocuSign.eSign.Model;
 using System.Threading.Tasks;
 
@@ -36,9 +35,9 @@ namespace WebCon.BpsExt.Signing.DocuSign.CustomActions.CheckDocumentStatus
         private async Task<Envelope> GetEnvelopeAsync(ActionContextInfo context)
         {
             var envId = context.CurrentDocument.Fields.GetByID(Configuration.InputParameters.EnvelopeFieldId).GetValue().ToString();
-            var apiClient = new DocuSignClient();
             _logger.AppendLine("Downloading envelope");
-            return await new ApiHelper(apiClient, Configuration.ApiSettings, _logger).GetEnvelopAsync(envId);
+            var helper = ApiHelper.Create(Configuration.ApiSettings, context);
+            return await helper.GetEnvelopAsync(envId);
         }
     }
 }
