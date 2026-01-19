@@ -25,7 +25,7 @@ jobs:
         xcopy "ReferenceDll\System.ComponentModel.Annotations.dll" "WebCon.BpsExt.Signing.DocuSign\bin\Release\net9.0\" /Y
     - uses: actions/upload-artifact@v4
       with:
-        name: WebCon.BpsExt.Signing.DocuSign-${{ matrix.runs-on }}
+        name: WebCon.BpsExt.Signing.DocuSign${{ matrix.runs-on }}
         path: |
           WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/WebCon.BpsExt.Signing.DocuSign.dll
           WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/WebCon.BpsExt.Signing.DocuSign.json
