@@ -20,21 +20,21 @@ jobs:
       run: dotnet build WebCon.BpsExt.Signing.DocuSign.sln  --no-restore --configuration Release 
     - name: Copy references
       run: |
-        mkdir -p "WebCon.BpsExt.Signing.DocuSign\bin\Release\netstandard2.0\serviceDependencies\"
-        xcopy "WebCon.BpsExt.Signing.DocuSign\ServiceReferenceDll\*.dll" "WebCon.BpsExt.Signing.DocuSign\bin\Release\netstandard2.0\serviceDependencies\" /Y
-        xcopy "ReferenceDll\System.ComponentModel.Annotations.dll" "WebCon.BpsExt.Signing.DocuSign\bin\Release\netstandard2.0\" /Y
+        mkdir -p "WebCon.BpsExt.Signing.DocuSign\bin\Release\net9.0\serviceDependencies\"
+        xcopy "WebCon.BpsExt.Signing.DocuSign\ServiceReferenceDll\*.dll" "WebCon.BpsExt.Signing.DocuSign\bin\Release\net9.0\serviceDependencies\" /Y
+        xcopy "ReferenceDll\System.ComponentModel.Annotations.dll" "WebCon.BpsExt.Signing.DocuSign\bin\Release\net9.0\" /Y
     - uses: actions/upload-artifact@v3
       with:
         name: WebCon.BpsExt.Signing.DocuSign
         path: |
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/WebCon.BpsExt.Signing.DocuSign.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/WebCon.BpsExt.Signing.DocuSign.json
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/BouncyCastle.Cryptography.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/DocuSign.eSign.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/Microsoft.IdentityModel.Logging.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/Microsoft.IdentityModel.Protocols.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/Microsoft.IdentityModel.Tokens.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/System.ComponentModel.Annotations.dll
-          WebCon.BpsExt.Signing.DocuSign/bin/Release/netstandard2.0/serviceDependencies
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/WebCon.BpsExt.Signing.DocuSign.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/WebCon.BpsExt.Signing.DocuSign.json
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/BouncyCastle.Cryptography.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/DocuSign.eSign.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/Microsoft.IdentityModel.Logging.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/Microsoft.IdentityModel.Protocols.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/Microsoft.IdentityModel.Tokens.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/System.IdentityModel.Tokens.Jwt.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/System.ComponentModel.Annotations.dll
+          WebCon.BpsExt.Signing.DocuSign/bin/Release/net9.0/serviceDependencies
